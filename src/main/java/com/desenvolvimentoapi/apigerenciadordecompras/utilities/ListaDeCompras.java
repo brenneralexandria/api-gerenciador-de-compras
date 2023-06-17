@@ -1,4 +1,7 @@
-package com.desenvolvimentoapi.apigerenciadordecompras;
+package com.desenvolvimentoapi.apigerenciadordecompras.utilities;
+
+import com.desenvolvimentoapi.apigerenciadordecompras.Item;
+import com.desenvolvimentoapi.apigerenciadordecompras.ItemComQtd;
 
 import java.util.*;
 
