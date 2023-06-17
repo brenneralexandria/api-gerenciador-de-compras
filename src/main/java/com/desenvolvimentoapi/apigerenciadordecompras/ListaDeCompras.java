@@ -1,4 +1,4 @@
-package com.desenvolvimentoapi.apigerenciadordecompras.model;
+package com.desenvolvimentoapi.apigerenciadordecompras;
 
 import java.util.*;
 

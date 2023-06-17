@@ -1,19 +1,26 @@
-package com.desenvolvimentoapi.apigerenciadordecompras.model;
-
+package com.desenvolvimentoapi.apigerenciadordecompras;
 
 // Classe para itens que têm quantidade (subclasse de Item)
-class ItemComQtd extends Item {
-    private final int quantidade;
+public class ItemComQtd extends Item {
 
+    // Atributos da classe
+    private int quantidade;
+
+    // Construtor utilizando os atributos da classe Item
     public ItemComQtd(String id, String nome, int quantidade) {
         super(id, nome);
         this.quantidade = quantidade;
     }
 
+    // Construtor vazio
+    public ItemComQtd() {}
+
+    // Getter de quantidade
     public int getQuantidade() {
         return quantidade;
     }
 
+    // Sobrescrevendo o método exibir
     @Override
     public void exibir() {
         String status = (comprado) ? " [x]" : " [ ]";

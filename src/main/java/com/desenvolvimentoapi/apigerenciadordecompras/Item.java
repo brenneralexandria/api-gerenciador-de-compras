@@ -1,6 +1,8 @@
-package com.desenvolvimentoapi.apigerenciadordecompras.model;
+package com.desenvolvimentoapi.apigerenciadordecompras;
 
-class Item {
+public class Item {
+
+    // Atributos da classe
     protected String id;
     protected String nome;
     protected boolean comprado;
@@ -11,6 +13,9 @@ class Item {
         this.nome = nome;
         this.comprado = false;
     }
+
+    // Construtor vazio
+    public Item() {}
 
     // Getter e Setter
     public String getId() {
