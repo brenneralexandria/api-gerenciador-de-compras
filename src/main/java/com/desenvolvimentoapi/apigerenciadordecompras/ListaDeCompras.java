@@ -3,10 +3,13 @@ package com.desenvolvimentoapi.apigerenciadordecompras;
 import java.util.*;
 
 public class ListaDeCompras {
+
+    // Atributos da classe
     private Map<String, Item> itens;
     private Scanner scanner;
     private int nextId;
 
+    // Construtor
     public ListaDeCompras() {
         itens = new HashMap<>();
         scanner = new Scanner(System.in);
@@ -26,16 +29,19 @@ public class ListaDeCompras {
         Item item;
 
         if (opcao == 1) {
+            // Caso a opção seja igual a 1 vai ser criado um item com os atributos id e nome.
             item = new Item(id, nome);
         } else if (opcao == 2) {
             System.out.print("Digite a quantidade: ");
             int quantidade = Integer.parseInt(scanner.nextLine());
+            // Caso a opção seja igual a 2 vai ser criado um item com os atributos id, nome e quantidade.
             item = new ItemComQtd(id, nome, quantidade);
         } else {
             System.out.println("Opção inválida.");
             return;
         }
 
+        // Armazena o item criado no map.
         itens.put(id, item);
         System.out.println("Item adicionado à lista com o ID: " + id);
     }
@@ -92,10 +98,10 @@ public class ListaDeCompras {
         System.out.println();
     }
 
-    // Executar o programa
+    // Executa o programa
     public void executar() {
-        int opcao = 0;
-        while (opcao != 5) {
+        int opcao = 0; // Contador do loop
+        while (opcao != 6) {
             System.out.println("1 - Adicionar item");
             System.out.println("2 - Remover item");
             System.out.println("3 - Editar item");
