@@ -2,103 +2,201 @@ package com.desenvolvimentoapi.apigerenciadordecompras.utilities;
 
 import com.desenvolvimentoapi.apigerenciadordecompras.Item;
 import com.desenvolvimentoapi.apigerenciadordecompras.ItemComQtd;
+import com.desenvolvimentoapi.apigerenciadordecompras.database.ConexaoDB;
 
-import java.util.*;
+import java.sql.*;
+import java.util.Scanner;
 
 public class ListaDeCompras {
 
     // Atributos da classe
-    private Map<String, Item> itens;
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
     private Scanner scanner;
     private int nextId;
 
     // Construtor
     public ListaDeCompras() {
-        itens = new HashMap<>();
+        ConexaoDB conexaoDB = new ConexaoDB();
+        connection = conexaoDB.getConnection();
         scanner = new Scanner(System.in);
         nextId = 1;
     }
 
     // Adicionar item à lista
     public void adicionarItem() {
-        System.out.print("Digite o nome do item: ");
-        String nome = scanner.nextLine();
-        System.out.println("1 - Item normal");
-        System.out.println("2 - Item com quantidade");
-        System.out.print("Escolha o tipo de item: ");
-        int opcao = Integer.parseInt(scanner.nextLine());
+        try {
+            System.out.print("Digite o nome do item: ");
+            String nome = scanner.nextLine();
+            System.out.println("1 - Item normal");
+            System.out.println("2 - Item com quantidade");
+            System.out.print("Escolha o tipo de item: ");
+            int opcao = Integer.parseInt(scanner.nextLine());
 
-        String id = String.valueOf(nextId++);
-        Item item;
+            String id = String.valueOf(nextId++);
+            Item item;
 
-        if (opcao == 1) {
-            // Caso a opção seja igual a 1 vai ser criado um item com os atributos id e nome.
-            item = new Item(id, nome);
-        } else if (opcao == 2) {
-            System.out.print("Digite a quantidade: ");
-            int quantidade = Integer.parseInt(scanner.nextLine());
-            // Caso a opção seja igual a 2 vai ser criado um item com os atributos id, nome e quantidade.
-            item = new ItemComQtd(id, nome, quantidade);
-        } else {
-            System.out.println("Opção inválida.");
-            return;
+            // Verifica se a tabela items existe
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, "items", null);
+            if (!tables.next()) {
+                // Cria a tabela items se ela não existir
+                String createTableSql = "CREATE TABLE items (" +
+                        "id VARCHAR(255) NOT NULL," +
+                        "nome VARCHAR(255) NOT NULL," +
+                        "quantidade INTEGER," +
+                        "comprado BOOLEAN DEFAULT FALSE," +
+                        "PRIMARY KEY (id)" +
+                        ")";
+                preparedStatement = connection.prepareStatement(createTableSql);
+                preparedStatement.executeUpdate();
+            }
+
+            if (opcao == 1) {
+                // Caso a opção seja igual a 1, será criado um item com os atributos id e nome.
+                item = new Item(id, nome);
+            } else if (opcao == 2) {
+                System.out.print("Digite a quantidade: ");
+                int quantidade = Integer.parseInt(scanner.nextLine());
+                // Caso a opção seja igual a 2, será criado um item com os atributos id, nome e quantidade.
+                item = new ItemComQtd(id, nome, quantidade);
+            } else {
+                System.out.println("Opção inválida.");
+                return;
+            }
+
+            // Armazena o item no banco de dados
+            String sql = "INSERT INTO items (id, nome, quantidade) VALUES (?, ?, ?)";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, nome);
+            if (item instanceof ItemComQtd) {
+                int quantidade = ((ItemComQtd) item).getQuantidade();
+                preparedStatement.setInt(3, quantidade);
+            } else {
+                preparedStatement.setNull(3, Types.INTEGER);
+            }
+            preparedStatement.executeUpdate();
+
+            System.out.println("Item adicionado à lista com o ID: " + id);
+        } catch (SQLException e) {
+            System.out.println("Erro ao adicionar item: " + e.getMessage());
         }
-
-        // Armazena o item criado no map.
-        itens.put(id, item);
-        System.out.println("Item adicionado à lista com o ID: " + id);
     }
 
     // Remover item da lista
     public void removerItem() {
-        System.out.print("Digite o ID do item a ser removido: ");
-        String id = scanner.nextLine();
+        try {
+            System.out.print("Digite o ID do item a ser removido: ");
+            String id = scanner.nextLine();
 
-        if (itens.containsKey(id)) {
-            itens.remove(id);
-            System.out.println("Item removido da lista.");
-        } else {
-            System.out.println("ID inválido.");
+            String sql = "DELETE FROM items WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, id);
+            int rowsDeleted = preparedStatement.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Item removido da lista.");
+            } else {
+                System.out.println("ID inválido.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao remover item: " + e.getMessage());
         }
     }
 
     // Editar item da lista
     public void editarItem() {
-        System.out.print("Digite o ID do item a ser editado: ");
-        String id = scanner.nextLine();
+        try {
+            System.out.print("Digite o ID do item a ser editado: ");
+            String id = scanner.nextLine();
 
-        if (itens.containsKey(id)) {
-            Item item = itens.get(id);
-            System.out.print("Digite o novo nome do item: ");
-            String novoNome = scanner.nextLine();
-            item.nome = novoNome;
-            System.out.println("Item editado.");
-        } else {
-            System.out.println("ID inválido.");
+            String sql = "SELECT * FROM items WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String nomeAtual = resultSet.getString("nome");
+                System.out.println("Nome atual do item: " + nomeAtual);
+                System.out.print("Digite o novo nome do item: ");
+                String novoNome = scanner.nextLine();
+
+                sql = "UPDATE items SET nome = ? WHERE id = ?";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, novoNome);
+                preparedStatement.setString(2, id);
+                preparedStatement.executeUpdate();
+
+                System.out.println("Item editado.");
+            } else {
+                System.out.println("ID inválido.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao editar item: " + e.getMessage());
         }
     }
 
     // Marcar item como comprado
     public void marcarComoComprado() {
-        System.out.print("Digite o ID do item a ser marcado como comprado: ");
-        String id = scanner.nextLine();
+        try {
+            System.out.print("Digite o ID do item a ser marcado como comprado: ");
+            String id = scanner.nextLine();
 
-        if (itens.containsKey(id)) {
-            Item item = itens.get(id);
-            item.setComprado(true);
-            System.out.println("Item marcado como comprado.");
-        } else {
-            System.out.println("ID inválido.");
+            String sql = "SELECT * FROM items WHERE id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                boolean compradoAtual = resultSet.getBoolean("comprado");
+                if (compradoAtual) {
+                    System.out.println("O item já está marcado como comprado.");
+                } else {
+                    sql = "UPDATE items SET comprado = true WHERE id = ?";
+                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, id);
+                    preparedStatement.executeUpdate();
+
+                    System.out.println("Item marcado como comprado.");
+                }
+            } else {
+                System.out.println("ID inválido.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao marcar item como comprado: " + e.getMessage());
         }
     }
 
     // Exibir lista de compras
     public void exibirLista() {
-        System.out.println("Lista de Compras:");
-        for (Item item : itens.values()) {
-            item.exibir();
+        try {
+            String sql = "SELECT * FROM items";
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            System.out.println("Lista de Compras:");
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                String nome = resultSet.getString("nome");
+                int quantidade = resultSet.getInt("quantidade");
+                boolean comprado = resultSet.getBoolean("comprado");
+
+                if (quantidade > 0) {
+                    Item item = new ItemComQtd(id, nome, quantidade);
+                    item.setComprado(comprado);
+                    item.exibir();
+                } else {
+                    Item item = new Item(id, nome);
+                    item.setComprado(comprado);
+                    item.exibir();
+                }
+            }
+            System.out.println();
+        } catch (SQLException e) {
+            System.out.println("Erro ao exibir lista de compras: " + e.getMessage());
         }
-        System.out.println();
     }
 
     // Executa o programa

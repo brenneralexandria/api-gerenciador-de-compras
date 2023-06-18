@@ -23,4 +23,8 @@ public class ConexaoDB {
             System.out.println("Banco de dados não conectado " + e.getMessage());
         }
     }
+
+    public Connection getConnection() {
+        return connection;
+    }
 }

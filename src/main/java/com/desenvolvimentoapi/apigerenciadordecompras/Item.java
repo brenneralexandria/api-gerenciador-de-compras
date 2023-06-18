@@ -4,7 +4,7 @@ public class Item {
 
     // Atributos da classe
     protected String id;
-    protected String nome;
+    public String nome;
     protected boolean comprado;
 
     // Construtor
