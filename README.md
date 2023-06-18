@@ -1,24 +1,30 @@
 <h1>SISTEMA PARA GERENCIAMENTO DE COMPRAS</h1>
 
-Projeto pensado e elaborado por mim com o foco de aprimorar e melhorar as minhas habilidades em backend. Sistema para gerenciar uma lista de compras do dia-a-dia(CRUD). 
+Este é um projeto de um sistema de gerenciamento de lista de compras, desenvolvido com o objetivo de aprimorar as habilidades em backend. O sistema permite realizar operações básicas de CRUD (Create, Read, Update, Delete) para gerenciar uma lista de compras do dia-a-dia.
 
 <h3>Tecnologias utilizadas</h3>
 
 * Java;
 * Banco de dados -> postgreSQL;
+* Spring boot;
 * JUnit -> Para testes.
 
 <h3>Recursos Disponíveis </h3>
+O sistema oferece os seguintes recursos:
 
-* Adicionar;
-* Editar;
-* Remover;
-* Ver todos os produtos.
+* Adicionar um novo item à lista de compras.
+* Editar um item existente na lista.
+* Remover um item da lista.
+* Visualizar todos os produtos presentes na lista.
 
 <h3>Como utilizar</h3>
 
-* Git clone no repositório;
-* Abrir da sua IDE;
-* Versão PostgreSQL -> 42.6.0. 
+* Clone o repositório para o seu ambiente local.
+* Importe o projeto em sua IDE.
+* Certifique-se de ter o PostgreSQL instalado na versão 42.6.0.
+* Configure a conexão com o banco de dados PostgreSQL no arquivo ConexaoDB.java, fornecendo a URL, nome de usuário e senha adequados.
+* Execute o arquivo Main.java para iniciar o programa.
+* Siga as instruções exibidas no console para interagir com o sistema e realizar as operações desejadas na lista de compras.
 
-![Capturar](https://github.com/brenneralexandria/sistema-para-gerenciamento-de-compras/assets/111987918/265d983d-5d4d-4e74-8187-5517cc6728ab)
+<h3>Observações</h3>
+Certifique-se de ter as dependências corretamente configuradas em seu ambiente de desenvolvimento, incluindo o driver JDBC do PostgreSQL.
