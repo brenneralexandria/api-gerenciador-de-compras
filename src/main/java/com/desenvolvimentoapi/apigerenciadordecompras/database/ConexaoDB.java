@@ -16,10 +16,11 @@ public class ConexaoDB {
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/dbListaDeCompras", "postgres", "110894");
+            System.out.println("Você está conectado ao banco de dados!!!");
         } catch (ClassNotFoundException e) {
             System.out.println("Driver não encontrado");
         } catch (SQLException e) {
-            System.out.println("Banco de dados não conectado" + e.getMessage());
+            System.out.println("Banco de dados não conectado " + e.getMessage());
         }
     }
 }
