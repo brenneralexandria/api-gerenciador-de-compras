@@ -1,8 +1,8 @@
-package com.desenvolvimentoapi.apigerenciadordecompras.utilities;
+package com.desenvolvimentoapi.apigerenciadordecompras.UTILITIES;
 
 import com.desenvolvimentoapi.apigerenciadordecompras.Item;
 import com.desenvolvimentoapi.apigerenciadordecompras.ItemComQtd;
-import com.desenvolvimentoapi.apigerenciadordecompras.database.ConexaoDB;
+import com.desenvolvimentoapi.apigerenciadordecompras.DATABASE.ConexaoDB;
 
 import java.sql.*;
 import java.util.Scanner;

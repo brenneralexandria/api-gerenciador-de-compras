@@ -1,4 +1,4 @@
-package com.desenvolvimentoapi.apigerenciadordecompras.database;
+package com.desenvolvimentoapi.apigerenciadordecompras.DATABASE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
